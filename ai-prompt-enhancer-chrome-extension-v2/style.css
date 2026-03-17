@@ -28,8 +28,8 @@ transition:all .2s;
 
 #promptIDE.collapsed{
 
-width:80px;
-height:70px;
+width:160px;
+height:65px;
 
 padding:10px;
 
@@ -38,9 +38,6 @@ border-radius:5%;
 
 display:flex;
 align-items:center;
-justify-content:center;
-
-cursor:pointer;
 
 }
 
@@ -60,6 +57,30 @@ justify-content:space-between;
 cursor:grab;
 
 user-select:none;
+
+}
+
+
+
+#toggleBtn{
+
+cursor:pointer;
+
+font-size:16px;
+
+padding:2px 6px;
+
+border-radius:4px;
+
+transition:background .2s;
+
+}
+
+
+
+#toggleBtn:hover{
+
+background:#333;
 
 }
 
@@ -138,7 +159,7 @@ left:50%;
 
 transform:translateX(-50%);
 
-background:#f59e0b; /* warning yellow */
+background:#f59e0b;
 
 color:#111;
 

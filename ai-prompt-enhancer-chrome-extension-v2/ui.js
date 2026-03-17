@@ -15,7 +15,7 @@ panel.innerHTML=`
 <div id="header">
 
 <span>Prompt IDE By Junaid</span>
-<span id="toggleBtn">⚡</span>
+<span id="toggleBtn" title="Collapse Panel">▼</span>
 
 </div>
 
@@ -87,6 +87,7 @@ function togglePanel(){
 
 const panel=document.getElementById("promptIDE")
 const body=document.getElementById("panelBody")
+const toggle=document.getElementById("toggleBtn")
 
 collapsed=!collapsed
 
@@ -95,27 +96,16 @@ if(collapsed){
 body.style.display="none"
 panel.classList.add("collapsed")
 
-panel.onclick=()=>{
-
-const enhanced=document.getElementById("enhancedOutput").value
-
-if(!enhanced){
-
-showToast("⚠ Input prompt is empty")
-return
-
-}
-
-replacePrompt(enhanced)
-clearPromptIDE()
-
-}
+toggle.textContent="▶"
+toggle.title="Expand Panel"
 
 }else{
 
 body.style.display="block"
 panel.classList.remove("collapsed")
-panel.onclick=null
+
+toggle.textContent="▼"
+toggle.title="Collapse Panel"
 
 }
 
