@@ -1,10 +1,63 @@
 # AI Prompt Enhancer Chrome Extension 🚀
 
-AI Prompt Enhancer is a developer-focused Chrome extension that automatically **enhances prompts while typing** in AI chat platforms such as **ChatGPT, Claude, Gemini, and Perplexity**.
+AI Prompt Enhancer is a developer-focused Chrome extension that automatically **enhances prompts while typing** in modern AI chat platforms such as:
+
+- ChatGPT
+- Claude
+- Gemini
+- Perplexity
 
 The extension converts **simple prompts into structured, professional prompts**, helping developers, researchers, and AI engineers receive **better and more accurate responses from AI models**.
 
-It works **completely locally**, requires **no login**, **no API keys**, and **no external services**.
+The extension works **completely locally** and requires:
+
+- ❌ No login  
+- ❌ No API keys  
+- ❌ No external services  
+
+---
+
+# 📦 Projects in this Repository
+
+This repository contains **two versions of the extension**.
+
+## 1️⃣ ai-prompt-enhancer-chrome-extension (Old Version)
+
+The original prompt enhancer extension.
+
+Features:
+
+- Automatic prompt expansion
+- Technology detection
+- Floating prompt panel
+- Local prompt processing
+
+Project folder:
+
+```
+ai-prompt-enhancer-chrome-extension
+```
+
+---
+
+## 2️⃣ ai-prompt-enhancer-chrome-extension-v2 (New Version)
+
+The **new improved version** with better UX and smarter prompt handling.
+
+New features include:
+
+- Prompt IDE interface
+- Improved prompt formatting
+- Toast notifications
+- Collapsible icon mode
+- Better drag and UI behavior
+- Improved editor compatibility
+
+Project folder:
+
+```
+ai-prompt-enhancer-chrome-extension-v2
+```
 
 ---
 
@@ -18,12 +71,13 @@ The extension automatically detects the type of prompt and enhances it with stru
 
 **User Prompt**
 
-
+```
 explain mysql
+```
 
 **Enhanced Prompt**
 
-
+```
 Act as an expert AI assistant.
 
 User question:
@@ -31,16 +85,15 @@ Explain MySQL database architecture and query optimization
 
 Provide:
 
-• clear explanation
-• key concepts
-• real-world examples
-• best practices
-• explain how mysql works internally
-• when to use mysql in production systems
-• common challenges when implementing mysql
+• clear explanation  
+• key concepts  
+• real-world examples  
+• best practices  
+• explain how mysql works internally  
+• when to use mysql in production systems  
+• common challenges when implementing mysql  
 • best architecture patterns using mysql
-
-
+```
 
 ---
 
@@ -136,16 +189,19 @@ The extension recognizes many modern development technologies.
 
 The extension works with the following AI platforms:
 
-- ChatGPT
-- Claude
-- Gemini
-- Perplexity
+- ChatGPT  
+- Claude  
+- Gemini  
+- Perplexity  
 
 ---
 
 # 📁 Project Structure
 
-ai-prompt-enhancer-chrome-extension
+Both versions follow a similar architecture.
+
+```
+project-folder
 │
 ├── manifest.json
 ├── detector.js
@@ -153,14 +209,13 @@ ai-prompt-enhancer-chrome-extension
 ├── ui.js
 ├── content.js
 └── style.css
-
-
+```
 
 ### manifest.json
 Defines the Chrome extension configuration and permissions.
 
 ### detector.js
-Detects the input editor of the AI platform.
+Detects the input editor used by the AI platform.
 
 ### enhancer.js
 Core prompt intelligence engine that analyzes prompts and generates enhanced prompts.
@@ -191,175 +246,162 @@ No API keys or external services are required.
 
 ## Step 1 — Clone the Repository
 
-Clone the repository using Git:
-
 ```bash
 git clone https://github.com/your-username/ai-prompt-enhancer-chrome-extension.git
-
+```
 
 Or download the repository as a ZIP file and extract it.
 
-Step 2 — Open Chrome Extensions
+---
 
-Open the Chrome extensions page:
+## Step 2 — Open Chrome Extensions
 
+Open:
+
+```
 chrome://extensions/
+```
 
-Enable Developer Mode in the top-right corner.
+Enable **Developer Mode** (top-right corner).
 
+---
 
-Step 3 — Load the Extension
+## Step 3 — Load the Extension
 
 Click:
+
+```
 Load unpacked
+```
 
-Select the folder:
+Then select **one of the project folders**.
 
+### Old Version
+
+```
 ai-prompt-enhancer-chrome-extension
+```
 
+### New Version (Recommended)
 
-ai-prompt-enhancer-chrome-extension
+```
+ai-prompt-enhancer-chrome-extension-v2
+```
 
+---
 
-Step 4 — Open an AI Platform
+## Step 4 — Open an AI Platform
 
 Navigate to any supported AI platform:
 
-https://chatgpt.com
+- https://chatgpt.com  
+- https://claude.ai  
+- https://gemini.google.com  
+- https://perplexity.ai  
 
-https://claude.ai
+---
 
-https://gemini.google.com
+# 🚀 How to Use
 
-https://perplexity.ai
+1. Open a supported AI chat platform.  
+2. Start typing a prompt in the chat input field.  
+3. The extension automatically generates an enhanced prompt.  
+4. Click **Apply Enhanced Prompt**.  
+5. The improved prompt replaces your original prompt.
 
+---
 
+# 💡 Practical Examples
 
-🚀 How to Use
-
-1 - Open a supported AI chat platform.
-
-2 - Start typing a prompt in the chat input field.
-
-3 - The extension automatically generates an enhanced version of your prompt in the floating panel.
-
-4 - Click Apply Enhanced Prompt.
-
-5 - The improved prompt replaces your original prompt.
-
-
-💡 Practical Examples
-
-
-AI Engineering
+## AI Engineering
 
 Prompt:
 
+```
 build rag system python
-
-*   Enhanced prompt will include:
-
-*   architecture explanation
-
-*   implementation strategy
-
-*   scalability considerations
-
-*   production challenges
-
-
-Backend Development
-
-Prompt:
-
-create fastapi authentication api
-
-
-Enhanced prompt will request:
-
-working code
-
-security considerations
-
-best practices
-
-
-
-Database Optimization
-
-Prompt:
-
-
-optimize mysql queries
-
+```
 
 Enhanced prompt will include:
 
-*   query optimization techniques
+- architecture explanation
+- implementation strategy
+- scalability considerations
+- production challenges
 
-*   indexing strategies
+---
 
-*   performance considerations
+## Backend Development
 
+Prompt:
 
+```
+create fastapi authentication api
+```
 
-⚠️ Common Mistakes
-Not Enabling Developer Mode
+Enhanced prompt will request:
 
-The extension cannot be loaded unless Developer Mode is enabled.
+- working code
+- security considerations
+- best practices
 
-Selecting the Wrong Folder
+---
 
-Make sure to select the root project folder containing manifest.json.
+## Database Optimization
 
-Using Unsupported Browsers
+Prompt:
 
-The extension only works in Chrome or Chromium-based browsers.
+```
+optimize mysql queries
+```
 
+Enhanced prompt will include:
 
+- query optimization techniques
+- indexing strategies
+- performance considerations
 
+---
 
-⚠️ Common Mistakes
-Not Enabling Developer Mode
+# ⚠️ Common Mistakes
 
-The extension cannot be loaded unless Developer Mode is enabled.
+### Not Enabling Developer Mode
 
-Selecting the Wrong Folder
+The extension cannot be loaded unless **Developer Mode** is enabled.
 
-Make sure to select the root project folder containing manifest.json.
+---
 
-Using Unsupported Browsers
+### Selecting the Wrong Folder
 
-The extension only works in Chrome or Chromium-based browsers.
+Make sure you select the **project folder containing `manifest.json`**.
 
+---
 
+### Using Unsupported Browsers
 
-🤝 Contributing
+The extension only works in **Chrome or Chromium-based browsers**.
+
+---
+
+# 🤝 Contributing
 
 Contributions are welcome.
 
 You can contribute by improving:
 
-prompt detection rules
+- prompt detection rules
+- technology recognition
+- UI features
+- prompt templates
+- prompt scoring
 
-technology recognition
+---
 
-UI features
-
-prompt templates
-
-prompt scoring
-
-
-📜 License
+# 📜 License
 
 MIT License
 
+---
 
+# 👨‍💻 Author
 
-
-👨‍💻 Author
-
-Built for developers and AI engineers who want better AI prompts automatically and improved AI responses.
-
-
+Built for developers and AI engineers who want **better AI prompts automatically and improved AI responses.**
