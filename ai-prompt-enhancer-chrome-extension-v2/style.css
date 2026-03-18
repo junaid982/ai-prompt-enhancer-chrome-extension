@@ -26,22 +26,29 @@ transition:all .2s;
 
 
 
+/* ---------- COLLAPSED MODE ---------- */
+
 #promptIDE.collapsed{
 
-width:80px;
-height:40px;
+width:fit-content;
+height:auto;
 
-padding:15px;
+padding:8px 12px;
 
-/* border:1px solid white; */
-border-radius:15%;
+border-radius:10px;
 
 display:flex;
 align-items:center;
+justify-content:center;
+
+white-space:nowrap;
+overflow:hidden;
 
 }
 
 
+
+/* ---------- HEADER ---------- */
 
 #promptIDE #header{
 
@@ -53,6 +60,7 @@ color:#4ade80;
 
 display:flex;
 justify-content:space-between;
+align-items:center;
 
 cursor:grab;
 
@@ -62,16 +70,25 @@ user-select:none;
 
 
 
+/* collapsed header adjustment */
+
+#promptIDE.collapsed #header{
+
+margin-bottom:0;
+
+gap:6px;
+
+}
+
+
+
+/* ---------- TOGGLE BUTTON ---------- */
+
 #toggleBtn{
 
 cursor:pointer;
 
 font-size:16px;
-
-/* padding:6px; */
-/* padding:2px 6px; */
-
-/* border-radius:4px; */
 
 transition:background .2s;
 
@@ -86,6 +103,8 @@ background:#333;
 }
 
 
+
+/* ---------- TEXTAREA ---------- */
 
 #promptIDE textarea{
 
@@ -109,6 +128,8 @@ resize:vertical;
 }
 
 
+
+/* ---------- APPLY BUTTON ---------- */
 
 #promptIDE button{
 
