@@ -37,6 +37,18 @@ enableDrag(panel)
 
 document.getElementById("toggleBtn").onclick=togglePanel
 
+
+// collapsed click support
+panel.addEventListener("click",(e)=>{
+
+if(!collapsed) return
+
+if(e.target.id==="toggleBtn") return
+
+handleApply()
+
+})
+
 }
 
 
@@ -167,3 +179,7 @@ document.removeEventListener("pointerup",stop)
 }
 
 }
+
+
+
+

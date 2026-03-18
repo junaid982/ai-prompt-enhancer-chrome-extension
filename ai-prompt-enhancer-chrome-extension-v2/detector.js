@@ -53,6 +53,7 @@ editor.focus()
 
 
 
+// TEXTAREA editors
 if(editor.tagName==="TEXTAREA"){
 
 editor.value=text
@@ -63,20 +64,41 @@ return
 
 
 
-editor.innerHTML=""
+// CONTENTEDITABLE editors (ChatGPT / Claude / Gemini)
 
-const lines=text.split("\n").filter(l=>l.trim()!=="")
+const selection=window.getSelection()
 
-lines.forEach(line=>{
+const range=document.createRange()
 
-const p=document.createElement("p")
+range.selectNodeContents(editor)
+range.deleteContents()
 
-p.textContent=line
+const textNode=document.createTextNode(text)
 
-editor.appendChild(p)
+editor.appendChild(textNode)
 
-})
+range.selectNodeContents(editor)
+range.collapse(false)
+
+selection.removeAllRanges()
+selection.addRange(range)
 
 editor.dispatchEvent(new Event("input",{bubbles:true}))
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

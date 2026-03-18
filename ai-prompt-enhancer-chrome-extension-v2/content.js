@@ -2,64 +2,83 @@ console.log("Prompt IDE Loaded")
 
 createPanel()
 
-let lastPrompt=""
+let lastPrompt = ""
+let applyLocked = false
+
 
 setInterval(()=>{
 
-const prompt=readPrompt()
+const prompt = readPrompt()
 
-if(prompt===lastPrompt) return
+if(!prompt) return
 
-lastPrompt=prompt
+// detect real user edit and unlock
+if(prompt !== lastPrompt){
+
+// if prompt no longer equals enhanced output then unlock
+const enhanced = document.getElementById("enhancedOutput")?.value || ""
+
+if(prompt.trim() !== enhanced.trim()){
+applyLocked = false
+}
+
+}
+
+if(prompt === lastPrompt) return
+
+lastPrompt = prompt
 
 updatePanel(prompt)
 
-toggleApplyButton(prompt)
-
-},700)
-
-
-
-function toggleApplyButton(prompt){
-
-const btn=document.getElementById("applyBtn")
-
-if(!btn) return
-
-if(!prompt || prompt.trim()===""){
-
-btn.disabled=true
-
-}else{
-
-btn.disabled=false
-
-}
-
-}
+},600)
 
 
 
 document.addEventListener("click",(e)=>{
 
-if(e.target.id==="applyBtn"){
+if(e.target.id === "applyBtn"){
 
-const prompt=readPrompt()
-
-if(!prompt || prompt.trim()===""){
-
-showToast("Input prompt is empty")
-
-return
-
-}
-
-const enhanced=document.getElementById("enhancedOutput").value
-
-replacePrompt(enhanced)
-
-clearPromptIDE()
+handleApply()
 
 }
 
 })
+
+
+
+function handleApply(){
+
+const currentPrompt = readPrompt()
+
+if(!currentPrompt || currentPrompt.trim()===""){
+
+showToast("Input box is empty")
+return
+
+}
+
+if(applyLocked){
+
+showToast("Enhanced prompt applied")
+return
+
+}
+
+const enhanced =
+document.getElementById("enhancedOutput").value
+
+if(!enhanced || enhanced.trim()===""){
+showToast("Enhanced prompt is empty")
+return
+}
+
+replacePrompt(enhanced)
+
+// lock immediately after first apply
+applyLocked = true
+
+}
+
+
+
+
