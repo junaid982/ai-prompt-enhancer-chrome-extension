@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Engineering IDE",
+  "version": "6.1",
+  "description": "Dynamic Prompt Enhancer",
+
+  "permissions": ["storage"],
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://www.perplexity.ai/*"
+      ],
+      "js": [
+        "detector.js",
+        "enhancer.js",
+        "ui.js",
+        "content.js"
+      ],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

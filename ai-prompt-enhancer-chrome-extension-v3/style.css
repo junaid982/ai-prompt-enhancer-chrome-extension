@@ -1,0 +1,509 @@
+/* ============================================================
+   PROMPT IDE — Neural Terminal Theme
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+:root {
+  --ide-bg:          #080c14;
+  --ide-surface:     #0d1424;
+  --ide-border:      rgba(34, 211, 238, 0.18);
+  --ide-border-glow: rgba(34, 211, 238, 0.45);
+  --ide-cyan:        #22d3ee;
+  --ide-cyan-dim:    rgba(34, 211, 238, 0.15);
+  --ide-indigo:      #818cf8;
+  --ide-green:       #4ade80;
+  --ide-amber:       #fbbf24;
+  --ide-red:         #f87171;
+  --ide-text:        #cbd5e1;
+  --ide-text-dim:    #475569;
+  --ide-text-bright: #f1f5f9;
+  --ide-font:        'JetBrains Mono', 'Courier New', monospace;
+}
+
+
+/* ── PANEL CONTAINER ─────────────────────────────────────── */
+
+#promptIDE {
+  position: fixed;
+  width: 370px;
+  background: var(--ide-bg);
+  color: var(--ide-text);
+  border: 1px solid var(--ide-border);
+  border-radius: 12px;
+  padding: 0;
+  z-index: 999999;
+  font-family: var(--ide-font);
+  font-size: 12px;
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(34, 211, 238, 0.06);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+#promptIDE:hover {
+  border-color: var(--ide-border-glow);
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.12),
+    0 8px 40px rgba(0, 0, 0, 0.7),
+    0 0 80px rgba(34, 211, 238, 0.1);
+}
+
+/* animated top accent line */
+#promptIDE::before {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ide-cyan), var(--ide-indigo), transparent);
+  background-size: 200% 100%;
+  animation: scanline 3s linear infinite;
+}
+
+@keyframes scanline {
+  0%   { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+
+/* ── COLLAPSED MODE ──────────────────────────────────────── */
+
+#promptIDE.collapsed {
+  width: auto;
+  border-radius: 8px;
+}
+
+#promptIDE.collapsed::before {
+  display: none;
+}
+
+
+/* ── HEADER ──────────────────────────────────────────────── */
+
+#ideHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(34,211,238,0.06), rgba(129,140,248,0.04));
+  border-bottom: 1px solid var(--ide-border);
+  cursor: grab;
+  user-select: none;
+}
+
+#ideHeader:active {
+  cursor: grabbing;
+}
+
+#ideTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#ideLogo {
+  font-size: 16px;
+  filter: drop-shadow(0 0 6px var(--ide-cyan));
+  animation: pulse-logo 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-logo {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--ide-cyan)); }
+  50%       { filter: drop-shadow(0 0 12px var(--ide-cyan)) brightness(1.3); }
+}
+
+#ideName {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  background: linear-gradient(90deg, var(--ide-cyan), var(--ide-indigo));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#ideControls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+#toggleBtn {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--ide-text-dim);
+  font-size: 14px;
+  transition: background 0.2s, color 0.2s;
+}
+
+#toggleBtn:hover {
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--ide-cyan);
+}
+
+
+/* ── PANEL BODY ──────────────────────────────────────────── */
+
+#panelBody {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* ── MODE TABS ───────────────────────────────────────────── */
+
+#modeRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modeLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--ide-text-dim);
+}
+
+#modeTabs {
+  display: flex;
+  gap: 4px;
+  background: var(--ide-surface);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.modeTab {
+  flex: 1;
+  padding: 5px 0;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--ide-text-dim);
+  font-family: var(--ide-font);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modeTab:hover:not(.active) {
+  color: var(--ide-text);
+  background: rgba(255,255,255,0.04);
+}
+
+.modeTab.active {
+  background: linear-gradient(135deg, rgba(34,211,238,0.2), rgba(129,140,248,0.15));
+  color: var(--ide-cyan);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.15);
+  text-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
+}
+
+
+/* ── AUTO ENHANCE ROW ────────────────────────────────────── */
+
+#autoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: var(--ide-surface);
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+#autoLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ide-text);
+}
+
+#autoIcon {
+  font-size: 12px;
+  color: var(--ide-text-dim);
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+/* ── LED TOGGLE SWITCH ───────────────────────────────────── */
+
+#toggleSwitch {
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+#toggleSwitch input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#toggleTrack {
+  width: 38px;
+  height: 20px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#toggleThumb {
+  width: 14px;
+  height: 14px;
+  background: var(--ide-text-dim);
+  border-radius: 50%;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+#autoEnhanceToggle:checked + #toggleTrack {
+  background: rgba(74, 222, 128, 0.2);
+  border-color: rgba(74, 222, 128, 0.5);
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.25);
+}
+
+#autoEnhanceToggle:checked + #toggleTrack #toggleThumb {
+  transform: translateX(18px);
+  background: var(--ide-green);
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.8);
+}
+
+
+/* ── OUTPUT WRAPPER ──────────────────────────────────────── */
+
+#outputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#outputHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#outputLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--ide-text-dim);
+}
+
+#copyBtn {
+  font-size: 14px;
+  color: var(--ide-text-dim);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+  user-select: none;
+}
+
+#copyBtn:hover {
+  color: var(--ide-cyan);
+  background: var(--ide-cyan-dim);
+}
+
+#enhancedOutput {
+  width: 100%;
+  height: 130px;
+  background: var(--ide-surface);
+  color: var(--ide-text-bright);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 10px;
+  font-family: var(--ide-font);
+  font-size: 11px;
+  line-height: 1.6;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+#enhancedOutput:focus {
+  border-color: rgba(34, 211, 238, 0.35);
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.08), inset 0 0 20px rgba(34, 211, 238, 0.03);
+}
+
+#enhancedOutput::placeholder {
+  color: var(--ide-text-dim);
+  font-style: italic;
+  font-size: 10px;
+}
+
+
+/* ── STATUS BAR ──────────────────────────────────────────── */
+
+#statusBar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 18px;
+}
+
+#statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--ide-text-dim);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+#statusDot.dot-ready {
+  background: var(--ide-text-dim);
+  box-shadow: none;
+}
+
+#statusDot.dot-detecting {
+  background: var(--ide-amber);
+  box-shadow: 0 0 6px var(--ide-amber);
+  animation: blink 0.8s ease-in-out infinite;
+}
+
+#statusDot.dot-enhanced {
+  background: var(--ide-green);
+  box-shadow: 0 0 8px var(--ide-green);
+}
+
+#statusDot.dot-unchanged {
+  background: var(--ide-indigo);
+  box-shadow: 0 0 6px var(--ide-indigo);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+#statusText {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--ide-text-dim);
+}
+
+
+/* ── APPLY BUTTON ────────────────────────────────────────── */
+
+#applyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-family: var(--ide-font);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+#applyBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s ease;
+}
+
+#applyBtn:hover::before {
+  left: 150%;
+}
+
+#applyBtn:hover {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5), 0 4px 12px rgba(0,0,0,0.3);
+}
+
+#applyBtn:active {
+  opacity: 0.85;
+}
+
+#applyBtn:disabled {
+  background: rgba(255,255,255,0.07);
+  color: var(--ide-text-dim);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+#applyIcon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+#applyShortcut {
+  font-size: 9px;
+  opacity: 0.65;
+  letter-spacing: 0.05em;
+}
+
+
+/* ── COLLAPSED PANEL ─────────────────────────────────────── */
+
+#promptIDE.collapsed #ideHeader {
+  border-bottom: none;
+  padding: 8px 12px;
+}
+
+
+/* ── GLOBAL TOAST ────────────────────────────────────────── */
+
+#globalToast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%, -8px);
+  background: linear-gradient(135deg, #1e2a38, #0f1929);
+  color: var(--ide-text-bright);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  font-family: var(--ide-font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 10px 22px;
+  border-radius: 8px;
+  box-shadow:
+    0 0 20px rgba(34, 211, 238, 0.15),
+    0 8px 24px rgba(0,0,0,0.4);
+  z-index: 9999999;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#globalToast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
