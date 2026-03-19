@@ -1,8 +1,12 @@
 // ui.js
 
-let collapsed   = false   // will be set to true after panel builds
-let autoEnhance = true    // DEFAULT: auto enhance ON
+let collapsed   = false
+let autoEnhance = true
 let mode        = "developer"
+
+// Tracks whether the last pointerdown→pointerup was a real drag.
+// Prevents the post-drag click from triggering apply or expand.
+let wasDragging = false
 
 
 // -------------------------------
@@ -83,14 +87,15 @@ function createPanel() {
 
   createToast()
 
+  // enableDrag must register before the click listener so wasDragging
+  // is set before the trailing click fires after a drag
   enableDrag(panel)
 
-  // Apply collapsed state visually right away
+  // Start collapsed
   panel.classList.add("collapsed")
   collapsed = true
 
-  // Apply auto-enhance LED glow right away (it's ON by default)
-  // We do this after a tiny delay so the DOM is ready
+  // Auto-enhance LED on by default
   setTimeout(() => {
     const icon = document.getElementById("autoIcon")
     if (icon) {
@@ -99,13 +104,16 @@ function createPanel() {
     }
   }, 0)
 
-  // Restore persisted settings — will override defaults if user
-  // previously changed them
   restoreSettings()
 
-  // ── Header toggle ──────────────────────────────────────────
 
-  document.getElementById("toggleBtn").onclick = togglePanel
+  // ── Toggle button — always expands/collapses ───────────────
+  // This is the ONLY place togglePanel() is called from the panel.
+
+  document.getElementById("toggleBtn").addEventListener("click", (e) => {
+    e.stopPropagation()   // prevent bubbling to panel click handler
+    togglePanel()
+  })
 
 
   // ── Mode tabs ──────────────────────────────────────────────
@@ -172,15 +180,31 @@ function createPanel() {
   })
 
 
-  // ── Collapsed panel click → apply ─────────────────────────
+  // ── Panel click handler ────────────────────────────────────
+  //
+  // BUG FIX 1: when collapsed, clicking the panel now calls
+  // handleApply() instead of togglePanel(). The toggle button
+  // (□/─) is the only control that expands/collapses.
+  //
+  // BUG FIX 2: wasDragging guard prevents a drag from
+  // accidentally triggering apply at the end of a drag gesture.
 
   panel.addEventListener("click", (e) => {
 
-    if (!collapsed) return
+    // Ignore if the toggle button was clicked (it has its own handler)
     if (e.target.id === "toggleBtn") return
 
-    // clicking the collapsed pill opens the panel
-    togglePanel()
+    // Ignore trailing click from a drag gesture
+    if (wasDragging) {
+      wasDragging = false
+      return
+    }
+
+    // Only act when collapsed — expanded panel handles normally
+    if (!collapsed) return
+
+    // Apply the enhanced prompt directly from the collapsed state
+    handleApply()
 
   })
 
@@ -189,16 +213,12 @@ function createPanel() {
 
 // -------------------------------
 // Restore settings from storage
-// Priority: stored value > defaults
 // -------------------------------
 
 function restoreSettings() {
 
   chrome.storage.local.get(["autoEnhance", "mode"], (result) => {
 
-    // ── Auto enhance ─────────────────────────────────────────
-    // Only override the default (true) if the user explicitly
-    // saved a value before
     if (result.autoEnhance !== undefined) {
 
       autoEnhance = result.autoEnhance
@@ -219,7 +239,6 @@ function restoreSettings() {
 
     }
 
-    // ── Mode ──────────────────────────────────────────────────
     if (result.mode) {
 
       mode = result.mode
@@ -250,7 +269,6 @@ function isAutoEnhance() {
 
 // -------------------------------
 // Status bar
-// States: "ready" | "detecting" | "enhanced" | "unchanged"
 // -------------------------------
 
 function setStatus(state, text) {
@@ -346,24 +364,28 @@ function updatePanel(prompt) {
 
 // -------------------------------
 // Draggable panel
+// DRAG_THRESHOLD: pointer must move more than this many px before
+// the gesture is counted as a drag (prevents tremor false-positives)
 // -------------------------------
+
+const DRAG_THRESHOLD = 4
 
 function enableDrag(panel) {
 
   const header = panel.querySelector("#ideHeader")
 
   let startX, startY, initialX, initialY
+  let dragging = false
 
   header.addEventListener("pointerdown", (e) => {
 
     if (e.target.id === "toggleBtn") return
 
-    header.style.cursor = "grabbing"
-
     startX   = e.clientX
     startY   = e.clientY
     initialX = panel.offsetLeft
     initialY = panel.offsetTop
+    dragging = false
 
     document.addEventListener("pointermove", move)
     document.addEventListener("pointerup",   stop)
@@ -372,8 +394,18 @@ function enableDrag(panel) {
 
   function move(e) {
 
-    panel.style.left = initialX + (e.clientX - startX) + "px"
-    panel.style.top  = initialY + (e.clientY - startY) + "px"
+    const dx = e.clientX - startX
+    const dy = e.clientY - startY
+
+    if (!dragging) {
+      if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return
+      dragging    = true
+      wasDragging = true
+      header.style.cursor = "grabbing"
+    }
+
+    panel.style.left = initialX + dx + "px"
+    panel.style.top  = initialY + dy + "px"
 
   }
 
@@ -383,6 +415,10 @@ function enableDrag(panel) {
 
     document.removeEventListener("pointermove", move)
     document.removeEventListener("pointerup",   stop)
+
+    // wasDragging intentionally stays true here.
+    // The click event fires after pointerup — the panel click handler
+    // will read wasDragging = true, skip the action, and reset it.
 
   }
 

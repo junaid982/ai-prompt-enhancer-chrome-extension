@@ -54,8 +54,21 @@ function readPrompt() {
 
 // -------------------------------
 // Replace editor content with text
-// BUG FIX: after rebuilding the DOM, restore cursor to the end
-// of the user's content section so typing continues naturally.
+//
+// BUG FIX: plain Event("input") is ignored by React / Vue / Svelte
+// controlled components. ChatGPT, Claude and Gemini all use framework-
+// controlled editors — they read from their own virtual state, not the
+// raw DOM. Updating innerHTML and firing a plain Event updates the DOM
+// but the framework re-renders from stale state on the next keystroke,
+// silently overwriting what we wrote.
+//
+// Fix strategy:
+//   TEXTAREA  → use the React internal native value setter, then fire
+//               a real InputEvent so React picks up the change.
+//   CONTENTEDITABLE → use document.execCommand("insertText") which
+//               generates a genuine browser input event that every
+//               framework (including ProseMirror) treats as real user
+//               input. Falls back to manual innerHTML + InputEvent.
 // -------------------------------
 
 function replacePrompt(text) {
@@ -67,17 +80,31 @@ function replacePrompt(text) {
   editor.focus()
 
 
-  // ── TEXTAREA editors ─────────────────────────────────────────
+  // ── TEXTAREA editors ─────────────────────────────────────
 
   if (editor.tagName === "TEXTAREA") {
 
-    editor.value = text
+    // Use React's internal native value setter so React registers
+    // the change in its own synthetic event system
+    try {
 
-    editor.dispatchEvent(
-      new Event("input", { bubbles: true })
-    )
+      const nativeSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLTextAreaElement.prototype,
+        "value"
+      ).set
 
-    // place cursor at end
+      nativeSetter.call(editor, text)
+
+    } catch (e) {
+
+      // fallback for non-React textareas
+      editor.value = text
+
+    }
+
+    editor.dispatchEvent(new InputEvent("input", { bubbles: true }))
+
+    // move cursor to end
     editor.selectionStart = editor.value.length
     editor.selectionEnd   = editor.value.length
 
@@ -86,7 +113,40 @@ function replacePrompt(text) {
   }
 
 
-  // ── CONTENTEDITABLE editors (ChatGPT, Gemini, Claude) ────────
+  // ── CONTENTEDITABLE editors (ChatGPT, Claude, Gemini) ────
+  //
+  // execCommand("selectAll") + execCommand("insertText") generates
+  // real browser input events that ProseMirror and React pick up as
+  // genuine user input — no framework state mismatch.
+
+  try {
+
+    // Select everything currently in the editor
+    document.execCommand("selectAll", false, null)
+
+    // Replace selection with our enhanced text.
+    // This fires a real InputEvent that the framework handles.
+    const inserted = document.execCommand("insertText", false, text)
+
+    if (inserted) {
+
+      // execCommand succeeded — cursor is now at end of inserted text.
+      // Trigger one more input event for frameworks that need it.
+      editor.dispatchEvent(new InputEvent("input", { bubbles: true }))
+
+      return
+
+    }
+
+  } catch (e) {
+
+    // execCommand not available on this platform — fall through
+
+  }
+
+
+  // ── Fallback: manual innerHTML rebuild ───────────────────
+  // Used when execCommand is unavailable (some sandboxed iframes).
 
   editor.innerHTML = ""
 
@@ -97,32 +157,24 @@ function replacePrompt(text) {
     const p = document.createElement("p")
 
     if (line.trim() === "") {
-
-      const br = document.createElement("br")
-      p.appendChild(br)
-
+      p.appendChild(document.createElement("br"))
     } else {
-
       p.textContent = line
-
     }
 
     editor.appendChild(p)
 
   })
 
-
-  // trigger framework reactivity
   editor.dispatchEvent(
-    new Event("input", { bubbles: true })
+    new InputEvent("input", {
+      bubbles:   true,
+      inputType: "insertText",
+      data:      text
+    })
   )
 
-
-  // ── CURSOR FIX ───────────────────────────────────────────────
-  // Place cursor at the end of the user's content section
-  // (the text between Task:/Question: and Provide:/Include:)
-  // so the user can keep typing without the cursor jumping away.
-
+  // Restore cursor to end of user content section
   placeCursorInContentSection(editor)
 
 }
@@ -131,10 +183,7 @@ function replacePrompt(text) {
 // -------------------------------
 // Place cursor at end of the user's
 // content section inside the template.
-//
-// Walks <p> elements looking for the block
-// between a start marker and an end marker.
-// Falls back to the last non-empty paragraph.
+// Used by the innerHTML fallback path.
 // -------------------------------
 
 function placeCursorInContentSection(editor) {
@@ -167,7 +216,6 @@ function placeCursorInContentSection(editor) {
 
   }
 
-  // fall back to last paragraph
   const target = lastContentP
     || paragraphs.filter(p => p.textContent.trim() !== "").pop()
 
@@ -179,13 +227,13 @@ function placeCursorInContentSection(editor) {
     const sel   = window.getSelection()
 
     range.selectNodeContents(target)
-    range.collapse(false)       // collapse to END of node
+    range.collapse(false)   // collapse to END
 
     sel.removeAllRanges()
     sel.addRange(range)
 
   } catch (e) {
-    // silently ignore — selection API can fail on some sites
+    // Selection API unavailable — ignore silently
   }
 
 }
